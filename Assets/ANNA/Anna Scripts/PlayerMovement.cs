@@ -1,27 +1,41 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f; 
+    public float moveSpeed = 5f;
+    public GameObject bombPrefab; 
 
     private Rigidbody2D rb;
-    private Vector2 movement;
+    private Vector2 movementInput;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        // Get input
-        movement.x = Input.GetAxisRaw("Horizontal"); 
-        movement.y = Input.GetAxisRaw("Vertical");   
+        rb.MovePosition(rb.position + movementInput * moveSpeed * Time.fixedDeltaTime);
     }
 
-    void FixedUpdate()
+    public void OnMove(InputAction.CallbackContext context)
     {
-        // Move the player
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        movementInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnPlaceBomb(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("PlaceBomb pressed!");
+            PlaceBomb();
+        }
+    }
+
+    private void PlaceBomb()
+    {
+        Vector2 placePosition = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
+        Instantiate(bombPrefab, placePosition, Quaternion.identity);
     }
 }

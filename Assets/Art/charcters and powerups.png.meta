@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: eba4657cc20cd404a9489d89568ddc20
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5982809075557394864
+    second: charcters and powerups_0
+  - first:
+      213: 2978820963943763344
+    second: charcters and powerups_1
+  - first:
+      213: -4649319879575251401
+    second: charcters and powerups_2
+  - first:
+      213: 1845821229047695147
+    second: charcters and powerups_3
+  - first:
+      213: -4207264346687770467
+    second: charcters and powerups_4
+  - first:
+      213: -3440905967353037889
+    second: charcters and powerups_5
+  - first:
+      213: 7463758929280501278
+    second: charcters and powerups_6
+  - first:
+      213: 8566533671424591768
+    second: charcters and powerups_7
+  - first:
+      213: 3723643494481208941
+    second: charcters and powerups_8
+  - first:
+      213: -3051733920580135973
+    second: charcters and powerups_9
+  - first:
+      213: -234594605668498555
+    second: charcters and powerups_10
+  - first:
+      213: -1868686128573062655
+    second: charcters and powerups_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: charcters and powerups_0
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 2819
+        width: 590
+        height: 493
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f82628e0bee3634da6d083708f32e69
+      internalID: 1535888457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_1
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 2819
+        width: 589
+        height: 493
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5bacbe7a88bc5144bb16cf7c4da3cc3
+      internalID: 1592873645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_2
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 2169
+        width: 589
+        height: 492
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00a2da50d8bd5de4aa00481cd6909a56
+      internalID: -729710902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_3
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 2169
+        width: 589
+        height: 494
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bf025bb760e2a744bbd1cb2722620b6
+      internalID: 607230287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_4
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 1611
+        width: 296
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37f74a4705dd5164989359a256bf938b
+      internalID: -861362865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_5
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 1596
+        width: 387
+        height: 340
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7076a4aafaca3324cb074ccba4115e78
+      internalID: 1788031282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_6
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 1616
+        width: 348
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e19353b3731a6c49ba79a254925f523
+      internalID: -2024525854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_7
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 1602
+        width: 329
+        height: 334
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b86ce55f388b24e4e99d00eadce3b527
+      internalID: -838970409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_8
+      rect:
+        serializedVersion: 2
+        x: 1857
+        y: 1539
+        width: 304
+        height: 471
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9e8560e20444ea4fbd0134a2ea35860
+      internalID: -8488734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_9
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 1208
+        width: 298
+        height: 283
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f788547885b5afa42bc5dc2adce18904
+      internalID: 2027390388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_10
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1200
+        width: 325
+        height: 313
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 246d404687829c1418ece4265a87aebf
+      internalID: -1412974118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: charcters and powerups_11
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 1200
+        width: 235
+        height: 312
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f55751e3255c1f498b205376782d150
+      internalID: 501625992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 16e514f60d310e44dbc764da30e28742
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      charcters and powerups_0: 1535888457
+      charcters and powerups_1: 1592873645
+      charcters and powerups_10: -1412974118
+      charcters and powerups_11: 501625992
+      charcters and powerups_2: -729710902
+      charcters and powerups_3: 607230287
+      charcters and powerups_4: -861362865
+      charcters and powerups_5: 1788031282
+      charcters and powerups_6: -2024525854
+      charcters and powerups_7: -838970409
+      charcters and powerups_8: -8488734
+      charcters and powerups_9: 2027390388
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
