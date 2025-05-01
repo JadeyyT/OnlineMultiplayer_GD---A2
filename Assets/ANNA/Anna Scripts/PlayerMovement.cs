@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     public Tilemap obstacleTilemap;
 
     private ParticleSystem trail;
+public GameObject impactEffectPrefab;
 
     private void Start()
     {
@@ -61,9 +62,22 @@ public class PlayerMovement : MonoBehaviour
 
     // Prevent movement into hard blocks or obstacles
     if (obstacleTilemap.HasTile(nextCell))
+{
+    // Play impact sound
+    AudioManager.Instance?.PlayObstacleBlocked();
+
+    
+
+    // Spawn impact effect
+    if (impactEffectPrefab != null)
     {
-        return;
+        Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
+        Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
     }
+
+    return;
+}
+
 
     targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
     isMoving = true;
@@ -125,6 +139,8 @@ public class PlayerMovement : MonoBehaviour
     Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
 
     GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
+
+     AudioManager.Instance?.PlayBombPlace();
 
     Bomb bombScript = bomb.GetComponent<Bomb>();
     if (bombScript != null)

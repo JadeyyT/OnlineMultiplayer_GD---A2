@@ -69,6 +69,8 @@ private IEnumerator VisualCountdown()
 
     private void Explode()
 {
+     AudioManager.Instance?.PlayExplosion();
+     
     Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
     Vector3 centerWorldPos = softBlockTilemap.GetCellCenterWorld(originCell);
 

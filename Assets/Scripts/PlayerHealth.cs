@@ -7,6 +7,8 @@ public class PlayerHealth : MonoBehaviour
    public void TakeDamage()
 {
     lives--;
+    
+    AudioManager.Instance?.PlayPlayerHurt(); 
 
     Debug.Log("Player hit! Lives left: " + lives);
 
