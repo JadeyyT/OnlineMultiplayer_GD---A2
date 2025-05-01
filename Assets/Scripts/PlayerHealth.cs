@@ -4,17 +4,24 @@ public class PlayerHealth : MonoBehaviour
 {
     public int lives = 3;
 
-    public void TakeDamage()
+   public void TakeDamage()
+{
+    lives--;
+
+    Debug.Log("Player hit! Lives left: " + lives);
+
+    // Flash screen
+    if (ScreenFlash.Instance != null)
     {
-        lives--;
-
-        Debug.Log("Player hit! Lives left: " + lives);
-
-        if (lives <= 0)
-        {
-            Die();
-        }
+        ScreenFlash.Instance.Flash();
     }
+
+    if (lives <= 0)
+    {
+        Die();
+    }
+}
+
 
     private void Die()
     {

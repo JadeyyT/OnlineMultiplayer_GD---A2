@@ -101,12 +101,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd36db6653676f47aa45ed398457e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacleDestroyEffectPrefab: {fileID: 20542848044043901, guid: ed14a4341912b5a4d9f34c551eaf63ff, type: 3}
   explosionEffectPrefab: {fileID: 20542848044043901, guid: ed14a4341912b5a4d9f34c551eaf63ff, type: 3}
   explosionCenterPrefab: {fileID: 2284979787892535102, guid: 8cc864f123059a54facb597509ba26d8, type: 3}
   explosionBodyPrefab: {fileID: 4905186635772619803, guid: 5e7fd066540a2414c80858d473b946ef, type: 3}
   explosionEndPrefab: {fileID: 8701913608163105976, guid: 8da2b70de062a464f8f73a74899ec162, type: 3}
   softBlockTilemap: {fileID: 0}
   hardBlockTilemap: {fileID: 0}
+  obstacleTilemap: {fileID: 0}
   owner: {fileID: 0}
   explosionRange: 1
   powerUpPrefabs:

@@ -27,9 +27,12 @@ public class PlayerMovement : MonoBehaviour
     public Tilemap hardBlockTilemap;
     public Tilemap obstacleTilemap;
 
+    private ParticleSystem trail;
 
     private void Start()
     {
+        trail = GetComponentInChildren<ParticleSystem>();
+
         rb = GetComponent<Rigidbody2D>();
 
         // Snap player to starting tile
@@ -43,6 +46,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (trail != null)
+{
+    if (isMoving && !trail.isPlaying)
+        trail.Play();
+    else if (!isMoving && trail.isPlaying)
+        trail.Stop();
+}
+
        if (!isMoving && moveInput != Vector2.zero)
 {
     Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);

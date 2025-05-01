@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.Tilemaps;
 
 public class Bomb : MonoBehaviour
@@ -19,13 +20,52 @@ public class Bomb : MonoBehaviour
     private float fuseTime = 2f;
     private float explosionEffectLifetime = 1.5f;
     public GameObject[] powerUpPrefabs;  
-[Range(0f, 1f)] public float powerUpSpawnChance = 0.3f;  
+    [Range(0f, 1f)] public float powerUpSpawnChance = 0.3f;  
 
+    private SpriteRenderer spriteRenderer;
+    private Vector3 originalScale;
+    private Vector3 originalPosition;
 
-    private void Start()
+private void Start()
+{
+    spriteRenderer = GetComponent<SpriteRenderer>();
+    originalScale = transform.localScale;
+    originalPosition = transform.position;
+
+    StartCoroutine(VisualCountdown());
+    Invoke(nameof(Explode), fuseTime);
+}
+
+private IEnumerator VisualCountdown()
+{
+    float timer = 0f;
+    float flashInterval = 0.2f;
+
+    while (timer < fuseTime)
     {
-        Invoke(nameof(Explode), fuseTime);
+        // Pulse scale
+        float pulse = 1f + Mathf.Sin(timer * 10f) * 0.05f;
+        transform.localScale = originalScale * pulse;
+
+        // Flash color
+        spriteRenderer.color = Color.Lerp(Color.white, Color.red, Mathf.PingPong(Time.time * 5, 1f));
+
+        // Slight jitter near the end
+        if (fuseTime - timer < 0.5f)
+        {
+            transform.position = originalPosition + (Vector3)(Random.insideUnitCircle * 0.05f);
+        }
+
+        timer += Time.deltaTime;
+        yield return null;
     }
+
+    // Reset before explosion
+    transform.localScale = originalScale;
+    transform.position = originalPosition;
+    spriteRenderer.color = Color.white;
+}
+
 
     private void Explode()
 {

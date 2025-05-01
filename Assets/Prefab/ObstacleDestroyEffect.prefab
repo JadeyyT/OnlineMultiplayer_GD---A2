@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8088795624991223888}
   - component: {fileID: 4265768609800663078}
   m_Layer: 0
-  m_Name: bombEffect
+  m_Name: ObstacleDestroyEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,7 +223,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.7711997, g: 0.84570265, b: 0.98490566, a: 1}
+      maxColor: {r: 0, g: 0.22438855, b: 0.6377357, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -751,7 +751,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.35
+      value: 1
       mode: 0
       spread: 0
       speed:
@@ -1308,8 +1308,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
-        key1: {r: 0, g: 0.96862745, b: 1, a: 1}
+        key0: {r: 0.225525, g: 0.3164027, b: 0.6830188, a: 1}
+        key1: {r: 0.20808111, g: 0.5862494, b: 0.6301887, a: 1}
         key2: {r: 0, g: 0.32210982, b: 0.8867924, a: 0}
         key3: {r: 0, g: 0.32210982, b: 0.8867924, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1317,7 +1317,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 36237
+        ctime1: 57285
         ctime2: 65535
         ctime3: 65535
         ctime4: 0
@@ -4780,7 +4780,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4804,8 +4804,8 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
-  m_MinParticleSize: 0.06
-  m_MaxParticleSize: 0.61
+  m_MinParticleSize: 0
+  m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
