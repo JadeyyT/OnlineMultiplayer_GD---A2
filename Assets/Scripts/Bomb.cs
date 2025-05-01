@@ -1,17 +1,20 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Bomb : MonoBehaviour
 {
-    public GameObject explosionEffectPrefab; // Particle visual
+    public GameObject explosionEffectPrefab;
     public GameObject explosionCenterPrefab;
     public GameObject explosionBodyPrefab;
     public GameObject explosionEndPrefab;
 
+    public Tilemap softBlockTilemap;
+    public Tilemap hardBlockTilemap;
+    public PlayerMovement owner;
+
     public int explosionRange = 1;
     private float fuseTime = 2f;
     private float explosionEffectLifetime = 1.5f;
-
-    public PlayerMovement owner; 
 
     private void Start()
     {
@@ -19,61 +22,76 @@ public class Bomb : MonoBehaviour
     }
 
     private void Explode()
+{
+    Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
+    Vector3 centerWorldPos = softBlockTilemap.GetCellCenterWorld(originCell);
+
+    // Destroy soft block under the bomb
+    if (softBlockTilemap.HasTile(originCell))
     {
-        Vector2 origin = RoundToGrid(transform.position);
-
-       
-        Instantiate(explosionCenterPrefab, origin, Quaternion.identity);
-
-        
-        if (explosionEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(explosionEffectPrefab, origin, Quaternion.identity);
-            Destroy(effect, explosionEffectLifetime);
-        }
-
-        // 4 directions
-        CreateExplosionInDirection(Vector2.up);
-        CreateExplosionInDirection(Vector2.down);
-        CreateExplosionInDirection(Vector2.left);
-        CreateExplosionInDirection(Vector2.right);
-
-        
-        if (owner != null)
-        {
-            owner.OnBombExploded();
-        }
-
-        Destroy(gameObject);
+        softBlockTilemap.SetTile(originCell, null);
+        Debug.Log("Soft tile destroyed under bomb at: " + originCell);
     }
+
+    // Center explosion
+    Instantiate(explosionCenterPrefab, centerWorldPos, Quaternion.identity);
+
+    // Optional particle visual
+    if (explosionEffectPrefab != null)
+    {
+        GameObject effect = Instantiate(explosionEffectPrefab, centerWorldPos, Quaternion.identity);
+        Destroy(effect, explosionEffectLifetime);
+    }
+
+    // Spread explosion in 4 directions
+    CreateExplosionInDirection(Vector2.up);
+    CreateExplosionInDirection(Vector2.down);
+    CreateExplosionInDirection(Vector2.left);
+    CreateExplosionInDirection(Vector2.right);
+
+    if (owner != null)
+    {
+        owner.OnBombExploded();
+    }
+
+    Destroy(gameObject);
+}
+
 
     private void CreateExplosionInDirection(Vector2 direction)
     {
-        Vector2 origin = RoundToGrid(transform.position);
+        Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
 
         for (int i = 1; i <= explosionRange; i++)
         {
-            Vector2 spawnPos = origin + direction * i;
+            Vector3Int tilePos = originCell + new Vector3Int((int)direction.x * i, (int)direction.y * i, 0);
 
+            // Stop if hitting hard block
+            if (hardBlockTilemap.HasTile(tilePos))
+                break;
+
+            // Destroy soft block and stop
+            if (softBlockTilemap.HasTile(tilePos))
+            {
+                softBlockTilemap.SetTile(tilePos, null);
+                break;
+            }
+
+            // Place explosion effect
+            Vector3 worldPos = softBlockTilemap.GetCellCenterWorld(tilePos);
             GameObject prefabToUse = (i == explosionRange) ? explosionEndPrefab : explosionBodyPrefab;
 
-            GameObject part = Instantiate(prefabToUse, spawnPos, Quaternion.identity);
+            GameObject part = Instantiate(prefabToUse, worldPos, Quaternion.identity);
 
+            //  rotation for end pieces
             if (prefabToUse == explosionEndPrefab)
             {
-                float angle = 0f;
-                if (direction == Vector2.up) angle = 90f;
-                else if (direction == Vector2.right) angle = 0f;
-                else if (direction == Vector2.down) angle = -90f;
-                else if (direction == Vector2.left) angle = 180f;
+                float angle = direction == Vector2.up ? 90f :
+                              direction == Vector2.right ? 0f :
+                              direction == Vector2.down ? -90f : 180f;
 
                 part.transform.rotation = Quaternion.Euler(0f, 0f, angle);
             }
         }
-    }
-
-    private Vector2 RoundToGrid(Vector2 pos)
-    {
-        return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
     }
 }

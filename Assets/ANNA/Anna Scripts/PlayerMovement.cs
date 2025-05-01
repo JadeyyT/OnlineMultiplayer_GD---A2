@@ -1,43 +1,51 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float tileSize = 1f;
     public GameObject bombPrefab;
 
-    public int bombLimit = 1;              // Max bombs at once
-    public int totalBombs = 10;            // Total bombs available for the whole game
+    public int bombLimit = 1;
+    public int totalBombs = 10;
 
-    private int activeBombs = 0;           // Currently placed bombs
-    private int bombsRemaining;            // Internal tracker for bombs left
+    private int activeBombs = 0;
+    private int bombsRemaining;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
-    private Vector2 targetPosition;
+    private Vector3 targetPosition;
     private bool isMoving = false;
-    public TMP_Text bombsText; 
 
+    public TMP_Text bombsText;
+
+    // New tilemap references
+    public Tilemap groundTilemap;
+    public Tilemap softBlockTilemap;
+    public Tilemap hardBlockTilemap;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        targetPosition = rb.position;
 
-        bombsRemaining = totalBombs; 
+        // Snap player to starting tile
+        Vector3Int cell = groundTilemap.WorldToCell(transform.position);
+        targetPosition = groundTilemap.GetCellCenterWorld(cell);
+        rb.position = targetPosition;
 
+        bombsRemaining = totalBombs;
         UpdateBombsText();
-
     }
 
     private void Update()
     {
         if (!isMoving && moveInput != Vector2.zero)
         {
-            Vector2 newTargetPos = targetPosition + new Vector2(moveInput.x * tileSize, moveInput.y * tileSize);
-            targetPosition = newTargetPos;
+            Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
+            Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+            targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
             isMoving = true;
         }
     }
@@ -87,33 +95,34 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-  private void PlaceBomb()
-{
-    if (activeBombs >= bombLimit || bombsRemaining <= 0)
-        return;
-
-    Vector2 placePosition = new Vector2(Mathf.Round(targetPosition.x), Mathf.Round(targetPosition.y));
-    GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
-
-    Bomb bombScript = bomb.GetComponent<Bomb>();
-    if (bombScript != null)
+    private void PlaceBomb()
     {
-        bombScript.owner = this;
+        if (activeBombs >= bombLimit || bombsRemaining <= 0)
+            return;
+
+        Vector3Int cell = groundTilemap.WorldToCell(rb.position);
+        Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
+
+        GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
+
+        Bomb bombScript = bomb.GetComponent<Bomb>();
+        if (bombScript != null)
+        {
+            bombScript.owner = this;
+            bombScript.hardBlockTilemap = hardBlockTilemap;
+            bombScript.softBlockTilemap = softBlockTilemap;
+        }
+
+        activeBombs++;
+        bombsRemaining--;
+        UpdateBombsText();
     }
 
-    activeBombs++;
-    bombsRemaining--;
-
-    UpdateBombsText(); 
-}
-private void UpdateBombsText()
-{
-    if (bombsText != null)
+    private void UpdateBombsText()
     {
-        bombsText.text = "Bombs: " + bombsRemaining;
+        if (bombsText != null)
+            bombsText.text = "Bombs: " + bombsRemaining;
     }
-}
-
 
     public void OnBombExploded()
     {

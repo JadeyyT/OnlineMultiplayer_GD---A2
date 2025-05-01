@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: -838970409, guid: eba4657cc20cd404a9489d89568ddc20, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -106,6 +106,9 @@ MonoBehaviour:
   explosionBodyPrefab: {fileID: 4905186635772619803, guid: 5e7fd066540a2414c80858d473b946ef, type: 3}
   explosionEndPrefab: {fileID: 8701913608163105976, guid: 8da2b70de062a464f8f73a74899ec162, type: 3}
   explosionRange: 1
+  owner: {fileID: 0}
+  softBlockTilemap: {fileID: 0}
+  hardBlockTilemap: {fileID: 0}
 --- !u!61 &3477856775460565642
 BoxCollider2D:
   m_ObjectHideFlags: 0
