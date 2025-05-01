@@ -58,40 +58,48 @@ public class Bomb : MonoBehaviour
 }
 
 
-    private void CreateExplosionInDirection(Vector2 direction)
+  private void CreateExplosionInDirection(Vector2 direction)
+{
+    Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
+
+    for (int i = 1; i <= explosionRange; i++)
     {
-        Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
+        Vector3Int tilePos = originCell + new Vector3Int((int)direction.x * i, (int)direction.y * i, 0);
+        Vector3 worldPos = softBlockTilemap.GetCellCenterWorld(tilePos);
 
-        for (int i = 1; i <= explosionRange; i++)
+        // Stop at hard block (no explosion shown)
+        if (hardBlockTilemap.HasTile(tilePos))
+            break;
+
+        // If soft block: destroy AND still show explosion
+        if (softBlockTilemap.HasTile(tilePos))
         {
-            Vector3Int tilePos = originCell + new Vector3Int((int)direction.x * i, (int)direction.y * i, 0);
+            softBlockTilemap.SetTile(tilePos, null);
 
-            // Stop if hitting hard block
-            if (hardBlockTilemap.HasTile(tilePos))
-                break;
+            GameObject endPart = Instantiate(explosionEndPrefab, worldPos, Quaternion.identity);
+            RotateEnd(endPart, direction);
 
-            // Destroy soft block and stop
-            if (softBlockTilemap.HasTile(tilePos))
-            {
-                softBlockTilemap.SetTile(tilePos, null);
-                break;
-            }
-
-            // Place explosion effect
-            Vector3 worldPos = softBlockTilemap.GetCellCenterWorld(tilePos);
-            GameObject prefabToUse = (i == explosionRange) ? explosionEndPrefab : explosionBodyPrefab;
-
-            GameObject part = Instantiate(prefabToUse, worldPos, Quaternion.identity);
-
-            //  rotation for end pieces
-            if (prefabToUse == explosionEndPrefab)
-            {
-                float angle = direction == Vector2.up ? 90f :
-                              direction == Vector2.right ? 0f :
-                              direction == Vector2.down ? -90f : 180f;
-
-                part.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            }
+            break; // Stop spreading further
         }
+
+        // If clear space: spawn explosion
+        GameObject bodyPart = Instantiate(
+            i == explosionRange ? explosionEndPrefab : explosionBodyPrefab,
+            worldPos,
+            Quaternion.identity
+        );
+
+        if (i == explosionRange)
+            RotateEnd(bodyPart, direction);
     }
+}
+private void RotateEnd(GameObject part, Vector2 direction)
+{
+    float angle = direction == Vector2.up ? 90f :
+                  direction == Vector2.right ? 0f :
+                  direction == Vector2.down ? -90f : 180f;
+
+    part.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+}
+
 }
