@@ -2,14 +2,16 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    public GameObject explosionEffectPrefab; // particle visual
+    public GameObject explosionEffectPrefab; // Particle visual
     public GameObject explosionCenterPrefab;
     public GameObject explosionBodyPrefab;
     public GameObject explosionEndPrefab;
 
     public int explosionRange = 1;
     private float fuseTime = 2f;
-    private float explosionEffectLifetime = 1.5f; // seconds
+    private float explosionEffectLifetime = 1.5f;
+
+    public PlayerMovement owner; 
 
     private void Start()
     {
@@ -20,14 +22,14 @@ public class Bomb : MonoBehaviour
     {
         Vector2 origin = RoundToGrid(transform.position);
 
-        // Spawn center explosion sprite
+       
         Instantiate(explosionCenterPrefab, origin, Quaternion.identity);
 
-        // Spawn explosion particle effect 
+        
         if (explosionEffectPrefab != null)
         {
             GameObject effect = Instantiate(explosionEffectPrefab, origin, Quaternion.identity);
-            Destroy(effect, explosionEffectLifetime); // Auto-destroy after set time
+            Destroy(effect, explosionEffectLifetime);
         }
 
         // 4 directions
@@ -35,6 +37,12 @@ public class Bomb : MonoBehaviour
         CreateExplosionInDirection(Vector2.down);
         CreateExplosionInDirection(Vector2.left);
         CreateExplosionInDirection(Vector2.right);
+
+        
+        if (owner != null)
+        {
+            owner.OnBombExploded();
+        }
 
         Destroy(gameObject);
     }

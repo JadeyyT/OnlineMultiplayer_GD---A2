@@ -1,36 +1,44 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Movement speed (used for smooth move)
-    public float tileSize = 1f; // How big each tile is (usually 1 unit)
+    public float moveSpeed = 5f;
+    public float tileSize = 1f;
+    public GameObject bombPrefab;
 
-    public GameObject bombPrefab; // Drag your Bomb prefab here
+    public int bombLimit = 1;              // Max bombs at once
+    public int totalBombs = 10;            // Total bombs available for the whole game
+
+    private int activeBombs = 0;           // Currently placed bombs
+    private int bombsRemaining;            // Internal tracker for bombs left
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private Vector2 targetPosition;
     private bool isMoving = false;
+    public TMP_Text bombsText; 
+
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        targetPosition = rb.position; // Start at your current tile
+        targetPosition = rb.position;
+
+        bombsRemaining = totalBombs; 
+
+        UpdateBombsText();
+
     }
 
     private void Update()
     {
-        if (!isMoving)
+        if (!isMoving && moveInput != Vector2.zero)
         {
-            if (moveInput != Vector2.zero)
-            {
-                Vector2 newTargetPos = targetPosition + new Vector2(moveInput.x * tileSize, moveInput.y * tileSize);
-
-                // Set the new target position
-                targetPosition = newTargetPos;
-                isMoving = true;
-            }
+            Vector2 newTargetPos = targetPosition + new Vector2(moveInput.x * tileSize, moveInput.y * tileSize);
+            targetPosition = newTargetPos;
+            isMoving = true;
         }
     }
 
@@ -40,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.position = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
 
-            // If we have reached the target tile
             if (Vector2.Distance(rb.position, targetPosition) < 0.01f)
             {
                 rb.position = targetPosition;
@@ -55,7 +62,6 @@ public class PlayerMovement : MonoBehaviour
         {
             moveInput = context.ReadValue<Vector2>();
 
-            // Only allow pure cardinal directions (up/down/left/right, not diagonals)
             if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
             {
                 moveInput.y = 0;
@@ -81,10 +87,47 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-   private void PlaceBomb()
+  private void PlaceBomb()
 {
+    if (activeBombs >= bombLimit || bombsRemaining <= 0)
+        return;
+
     Vector2 placePosition = new Vector2(Mathf.Round(targetPosition.x), Mathf.Round(targetPosition.y));
-    Instantiate(bombPrefab, placePosition, Quaternion.identity);
+    GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
+
+    Bomb bombScript = bomb.GetComponent<Bomb>();
+    if (bombScript != null)
+    {
+        bombScript.owner = this;
+    }
+
+    activeBombs++;
+    bombsRemaining--;
+
+    UpdateBombsText(); 
+}
+private void UpdateBombsText()
+{
+    if (bombsText != null)
+    {
+        bombsText.text = "Bombs: " + bombsRemaining;
+    }
 }
 
+
+    public void OnBombExploded()
+    {
+        activeBombs = Mathf.Max(0, activeBombs - 1);
+    }
+
+    public void SetBombLimit(int newLimit)
+    {
+        bombLimit = Mathf.Max(1, newLimit);
+    }
+
+    public void SetTotalBombs(int newTotal)
+    {
+        totalBombs = Mathf.Max(0, newTotal);
+        bombsRemaining = totalBombs;
+    }
 }

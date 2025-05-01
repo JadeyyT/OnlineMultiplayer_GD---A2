@@ -3,7 +3,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
    public PlayerHealth playerHealth;
-    public TMP_Text livesText; // Use Text if you're not using TMP
+    public TMP_Text livesText; 
 
     void Update()
     {
