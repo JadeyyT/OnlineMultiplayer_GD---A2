@@ -10,6 +10,9 @@ public class Bomb : MonoBehaviour
 
     public Tilemap softBlockTilemap;
     public Tilemap hardBlockTilemap;
+   public Tilemap obstacleTilemap; 
+
+
     public PlayerMovement owner;
 
     public int explosionRange = 1;
@@ -39,7 +42,7 @@ public class Bomb : MonoBehaviour
     // Center explosion
     Instantiate(explosionCenterPrefab, centerWorldPos, Quaternion.identity);
 
-    // Optional particle visual
+    
     if (explosionEffectPrefab != null)
     {
         GameObject effect = Instantiate(explosionEffectPrefab, centerWorldPos, Quaternion.identity);
@@ -61,7 +64,7 @@ public class Bomb : MonoBehaviour
 }
 
 
-  private void CreateExplosionInDirection(Vector2 direction)
+private void CreateExplosionInDirection(Vector2 direction)
 {
     Vector3Int originCell = softBlockTilemap.WorldToCell(transform.position);
 
@@ -70,33 +73,61 @@ public class Bomb : MonoBehaviour
         Vector3Int tilePos = originCell + new Vector3Int((int)direction.x * i, (int)direction.y * i, 0);
         Vector3 worldPos = softBlockTilemap.GetCellCenterWorld(tilePos);
 
-        // Stop at hard block (no explosion shown)
-        if (hardBlockTilemap.HasTile(tilePos))
-            break;
-
-        // If soft block: destroy AND still show explosion
-        if (softBlockTilemap.HasTile(tilePos))
+        // If obstacle exists, destroy it first (even on hard tiles)
+        bool obstacleDestroyed = false;
+        if (obstacleTilemap.HasTile(tilePos))
         {
-            softBlockTilemap.SetTile(tilePos, null);
-             SpawnPowerUp(tilePos);
+            obstacleTilemap.SetTile(tilePos, null);
+            Debug.Log("Obstacle destroyed at: " + tilePos);
 
-            GameObject endPart = Instantiate(explosionEndPrefab, worldPos, Quaternion.identity);
-            RotateEnd(endPart, direction);
+            GameObject explosion = Instantiate(
+                i == explosionRange ? explosionEndPrefab : explosionBodyPrefab,
+                worldPos,
+                Quaternion.identity
+            );
+            if (i == explosionRange)
+                RotateEnd(explosion, direction);
 
-            break; // Stop spreading further
+            obstacleDestroyed = true;
         }
 
-        // If clear space: spawn explosion
-        GameObject bodyPart = Instantiate(
-            i == explosionRange ? explosionEndPrefab : explosionBodyPrefab,
-            worldPos,
-            Quaternion.identity
-        );
+        //If there's still a hard tile and no obstacle was just cleared, stop explosion
+        if (hardBlockTilemap.HasTile(tilePos) && !obstacleDestroyed)
+        {
+            break;
+        }
 
-        if (i == explosionRange)
-            RotateEnd(bodyPart, direction);
+        // Skip soft tile logic if we already destroyed an obstacle at this spot
+        if (!obstacleDestroyed && softBlockTilemap.HasTile(tilePos))
+        {
+            softBlockTilemap.SetTile(tilePos, null);
+            SpawnPowerUp(tilePos);
+
+            GameObject explosion = Instantiate(
+                explosionEndPrefab,
+                worldPos,
+                Quaternion.identity
+            );
+            RotateEnd(explosion, direction);
+            break;
+        }
+
+        // Empty: just show explosion
+        if (!obstacleDestroyed)
+        {
+            GameObject part = Instantiate(
+                i == explosionRange ? explosionEndPrefab : explosionBodyPrefab,
+                worldPos,
+                Quaternion.identity
+            );
+
+            if (i == explosionRange)
+                RotateEnd(part, direction);
+        }
     }
 }
+
+
 private void RotateEnd(GameObject part, Vector2 direction)
 {
     float angle = direction == Vector2.up ? 90f :

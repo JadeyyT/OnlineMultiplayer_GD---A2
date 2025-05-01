@@ -105,28 +105,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void PlaceBomb()
+   private void PlaceBomb()
+{
+    if (activeBombs >= bombLimit || bombsRemaining <= 0)
+        return;
+
+    Vector3Int cell = groundTilemap.WorldToCell(rb.position);
+    Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
+
+    GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
+
+    Bomb bombScript = bomb.GetComponent<Bomb>();
+    if (bombScript != null)
     {
-        if (activeBombs >= bombLimit || bombsRemaining <= 0)
-            return;
-
-        Vector3Int cell = groundTilemap.WorldToCell(rb.position);
-        Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
-
-        GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
-
-        Bomb bombScript = bomb.GetComponent<Bomb>();
-        if (bombScript != null)
-        {
-            bombScript.owner = this;
-            bombScript.hardBlockTilemap = hardBlockTilemap;
-            bombScript.softBlockTilemap = softBlockTilemap;
-        }
-
-        activeBombs++;
-        bombsRemaining--;
-        UpdateBombsText();
+        bombScript.owner = this;
+        bombScript.hardBlockTilemap = hardBlockTilemap;
+        bombScript.softBlockTilemap = softBlockTilemap;
+        bombScript.obstacleTilemap = obstacleTilemap; 
     }
+
+    activeBombs++;
+    bombsRemaining--;
+    UpdateBombsText();
+}
 
     private void UpdateBombsText()
     {
