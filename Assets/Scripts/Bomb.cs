@@ -15,6 +15,9 @@ public class Bomb : MonoBehaviour
     public int explosionRange = 1;
     private float fuseTime = 2f;
     private float explosionEffectLifetime = 1.5f;
+    public GameObject[] powerUpPrefabs;  
+[Range(0f, 1f)] public float powerUpSpawnChance = 0.3f;  
+
 
     private void Start()
     {
@@ -75,6 +78,7 @@ public class Bomb : MonoBehaviour
         if (softBlockTilemap.HasTile(tilePos))
         {
             softBlockTilemap.SetTile(tilePos, null);
+             SpawnPowerUp(tilePos);
 
             GameObject endPart = Instantiate(explosionEndPrefab, worldPos, Quaternion.identity);
             RotateEnd(endPart, direction);
@@ -101,5 +105,15 @@ private void RotateEnd(GameObject part, Vector2 direction)
 
     part.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 }
+private void SpawnPowerUp(Vector3Int cell)
+{
+    if (powerUpPrefabs.Length == 0 || Random.value > powerUpSpawnChance)
+        return;
+
+    int index = Random.Range(0, powerUpPrefabs.Length);
+    Vector3 spawnPos = softBlockTilemap.GetCellCenterWorld(cell);
+    Instantiate(powerUpPrefabs[index], spawnPos, Quaternion.identity);
+}
+
 
 }

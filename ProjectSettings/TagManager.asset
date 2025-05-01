@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Explosion
+  - PowerUp
   layers:
   - Default
   - TransparentFX
