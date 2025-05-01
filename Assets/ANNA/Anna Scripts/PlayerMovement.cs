@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 using TMPro;
 using UnityEngine.Tilemaps;
 
@@ -29,6 +30,9 @@ public class PlayerMovement : MonoBehaviour
 
     private ParticleSystem trail;
 public GameObject impactEffectPrefab;
+
+private bool isWobbling = false;
+    private Vector3 originalLocalPosition;
 
     private void Start()
     {
@@ -74,7 +78,7 @@ public GameObject impactEffectPrefab;
         Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
         Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
     }
-
+StartCoroutine(Wobble());
     return;
 }
 
@@ -176,5 +180,28 @@ public GameObject impactEffectPrefab;
     {
         totalBombs = Mathf.Max(0, newTotal);
         bombsRemaining = totalBombs;
+    }
+
+    private IEnumerator Wobble()
+    {
+        if (isWobbling) yield break;
+
+        isWobbling = true;
+        originalLocalPosition = transform.localPosition;
+
+        float wobbleTime = 0.2f;
+        float elapsed = 0f;
+        float strength = 0.05f;
+
+        while (elapsed < wobbleTime)
+        {
+            float x = Mathf.Sin(elapsed * 40f) * strength;
+            transform.localPosition = originalLocalPosition + new Vector3(x, 0f, 0f);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalLocalPosition;
+        isWobbling = false;
     }
 }
