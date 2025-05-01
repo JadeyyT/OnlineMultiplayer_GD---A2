@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     public Tilemap groundTilemap;
     public Tilemap softBlockTilemap;
     public Tilemap hardBlockTilemap;
+    public Tilemap obstacleTilemap;
+
 
     private void Start()
     {
@@ -41,13 +43,21 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!isMoving && moveInput != Vector2.zero)
-        {
-            Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
-            Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-            targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
-            isMoving = true;
-        }
+       if (!isMoving && moveInput != Vector2.zero)
+{
+    Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
+    Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+
+    // Prevent movement into hard blocks or obstacles
+    if (obstacleTilemap.HasTile(nextCell))
+    {
+        return;
+    }
+
+    targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
+    isMoving = true;
+}
+
     }
 
     private void FixedUpdate()
