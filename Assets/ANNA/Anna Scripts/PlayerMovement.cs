@@ -50,14 +50,22 @@ private bool isWobbling = false;
     }
 
     private void Update()
-    {
-        if (trail != null)
+    
 {
-    if (isMoving && !trail.isPlaying)
-        trail.Play();
-    else if (!isMoving && trail.isPlaying)
-        trail.Stop();
+   if (trail != null)
+{
+    if (isMoving)
+    {
+        if (!trail.isPlaying) trail.Play();
+        AudioManager.Instance?.PlayBubbleMove();
+    }
+    else
+    {
+        if (trail.isPlaying) trail.Stop();
+        AudioManager.Instance?.StopBubbleMove();
+    }
 }
+
 
        if (!isMoving && moveInput != Vector2.zero)
 {
