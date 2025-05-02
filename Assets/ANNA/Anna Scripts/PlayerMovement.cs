@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 2f;
     public GameObject bombPrefab;
 
     public int bombLimit = 1;
