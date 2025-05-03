@@ -5,12 +5,28 @@ using System.Collections.Generic;
 public class CustomNetworkManager : NetworkManager
 {
     [Header("Player Prefabs")]
-    public List<GameObject> playerPrefabs; // Assign multiple player prefabs here
+    public List<GameObject> playerPrefabs; 
+
+    private List<int> usedIndices = new List<int>(); 
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        // Randomly pick one of the prefabs
-        int index = Random.Range(0, playerPrefabs.Count);
+        int index;
+
+        // All prefabs have been used, reset the list
+        if (usedIndices.Count >= playerPrefabs.Count)
+        {
+            usedIndices.Clear();
+        }
+
+        // Pick a unique random index not already used
+        do
+        {
+            index = Random.Range(0, playerPrefabs.Count);
+        } while (usedIndices.Contains(index));
+
+        usedIndices.Add(index);
+
         GameObject prefabToSpawn = playerPrefabs[index];
 
         Transform startPos = GetStartPosition();
