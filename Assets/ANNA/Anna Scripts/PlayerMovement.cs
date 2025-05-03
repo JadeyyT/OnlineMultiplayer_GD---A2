@@ -29,6 +29,7 @@ public class PlayerMovement : NetworkBehaviour
     public Tilemap softBlockTilemap;
     public Tilemap hardBlockTilemap;
     public Tilemap obstacleTilemap;
+    public Tilemap boundaryTilemap;
 
     private ParticleSystem trail;
 public GameObject impactEffectPrefab;
@@ -55,12 +56,14 @@ private bool wasMoving = false; // To track changes
     softBlockTilemap = GameObject.Find("SoftBlockTilemap")?.GetComponent<Tilemap>();
     hardBlockTilemap = GameObject.Find("HardBlockTilemap")?.GetComponent<Tilemap>();
     obstacleTilemap = GameObject.Find("ObstacleTilemap")?.GetComponent<Tilemap>();
+    boundaryTilemap = GameObject.Find("BoundaryTilemap")?.GetComponent<Tilemap>();
 
     // Debug to check for null
     if (groundTilemap == null) Debug.LogError("GroundTilemap not found!");
     if (softBlockTilemap == null) Debug.LogError("SoftBlockTilemap not found!");
     if (hardBlockTilemap == null) Debug.LogError("HardBlockTilemap not found!");
     if (obstacleTilemap == null) Debug.LogError("ObstacleTilemap not found!");
+    if (boundaryTilemap == null) Debug.LogError("BoundaryTilemap not found!");
 
     // more movement setup
     rb = GetComponent<Rigidbody2D>();
@@ -103,7 +106,7 @@ public int GetBombsRemaining()
         if (trail.isPlaying) trail.Stop();
         AudioManager.Instance?.StopBubbleMove();
     }
-    
+
 }
     if (moveSoundSource != null)
     {
@@ -121,8 +124,9 @@ public int GetBombsRemaining()
     Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
     Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
-    // Prevent movement into hard blocks or obstacles
-    if (obstacleTilemap.HasTile(nextCell))
+    // Prevent movement into hard blocks or obstacles or boundary
+   if (obstacleTilemap.HasTile(nextCell) || boundaryTilemap.HasTile(nextCell))
+
 {
     // Play impact sound
     AudioManager.Instance?.PlayObstacleBlocked();
