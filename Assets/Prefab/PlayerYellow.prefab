@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 6375131014881400795}
   - component: {fileID: 1488370633118756942}
   m_Layer: 0
-  m_Name: charcter
+  m_Name: PlayerYellow
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,6 +82,7 @@ MonoBehaviour:
   softBlockTilemap: {fileID: 0}
   hardBlockTilemap: {fileID: 0}
   obstacleTilemap: {fileID: 0}
+  boundaryTilemap: {fileID: 0}
   impactEffectPrefab: {fileID: 7830071243294499491, guid: 0438e35cb86e58e41944c6d08ecf0a37, type: 3}
   moveSoundSource: {fileID: 6375131014881400795}
   moveSoundClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
@@ -129,7 +130,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 11
-  m_Sprite: {fileID: 1535888457, guid: eba4657cc20cd404a9489d89568ddc20, type: 3}
+  m_Sprite: {fileID: 607230287, guid: eba4657cc20cd404a9489d89568ddc20, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -205,7 +206,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.9006314, y: 4.9300003}
+    oldSize: {x: 5.8906307, y: 4.94}
     newSize: {x: 5.9006314, y: 4.9300003}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -428,7 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 1615523434
+  _assetId: 3620552177
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
