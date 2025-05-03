@@ -3,8 +3,10 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using TMPro;
 using UnityEngine.Tilemaps;
+using Mirror;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
+
 {
     public float moveSpeed = 2f;
     public GameObject bombPrefab;
@@ -22,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     public TMP_Text bombsText;
 
-    // New tilemap references
+
     public Tilemap groundTilemap;
     public Tilemap softBlockTilemap;
     public Tilemap hardBlockTilemap;
@@ -35,23 +37,42 @@ private bool isWobbling = false;
     private Vector3 originalLocalPosition;
 
     private void Start()
+{
+    if (!isLocalPlayer)
     {
-        trail = GetComponentInChildren<ParticleSystem>();
-
-        rb = GetComponent<Rigidbody2D>();
-
-        // Snap player to starting tile
-        Vector3Int cell = groundTilemap.WorldToCell(transform.position);
-        targetPosition = groundTilemap.GetCellCenterWorld(cell);
-        rb.position = targetPosition;
-
-        bombsRemaining = totalBombs;
-        UpdateBombsText();
+        GetComponent<PlayerInput>().enabled = false;
+        return;
     }
+
+    // Automatically assign tilemaps from the scene
+    groundTilemap = GameObject.Find("GroundTilemap")?.GetComponent<Tilemap>();
+    softBlockTilemap = GameObject.Find("SoftBlockTilemap")?.GetComponent<Tilemap>();
+    hardBlockTilemap = GameObject.Find("HardBlockTilemap")?.GetComponent<Tilemap>();
+    obstacleTilemap = GameObject.Find("ObstacleTilemap")?.GetComponent<Tilemap>();
+
+    // Debug to check for null
+    if (groundTilemap == null) Debug.LogError("GroundTilemap not found!");
+    if (softBlockTilemap == null) Debug.LogError("SoftBlockTilemap not found!");
+    if (hardBlockTilemap == null) Debug.LogError("HardBlockTilemap not found!");
+    if (obstacleTilemap == null) Debug.LogError("ObstacleTilemap not found!");
+
+    // Continue movement setup
+    rb = GetComponent<Rigidbody2D>();
+    Vector3Int cell = groundTilemap.WorldToCell(transform.position);
+    targetPosition = groundTilemap.GetCellCenterWorld(cell);
+    rb.position = targetPosition;
+
+    bombsRemaining = totalBombs;
+    UpdateBombsText();
+}
+
+
 
     private void Update()
     
-{
+{  
+    if (!isLocalPlayer) return;
+
    if (trail != null)
 {
     if (isMoving)
@@ -113,6 +134,8 @@ StartCoroutine(Wobble());
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
+
         if (context.performed)
         {
             moveInput = context.ReadValue<Vector2>();
@@ -136,6 +159,8 @@ StartCoroutine(Wobble());
 
     public void OnPlaceBomb(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
+        
         if (context.performed)
         {
             PlaceBomb();
