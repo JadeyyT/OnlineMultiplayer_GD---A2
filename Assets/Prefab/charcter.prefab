@@ -52,6 +52,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 651d28480116e70438e794da8107e540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   lives: 3
 --- !u!114 &287223221918506399
 MonoBehaviour:
@@ -79,6 +83,8 @@ MonoBehaviour:
   hardBlockTilemap: {fileID: 0}
   obstacleTilemap: {fileID: 0}
   impactEffectPrefab: {fileID: 7830071243294499491, guid: 0438e35cb86e58e41944c6d08ecf0a37, type: 3}
+  moveSoundSource: {fileID: 6375131014881400795}
+  moveSoundClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
 --- !u!212 &3907581035955529551
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -322,8 +328,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c8fae08dc7295304ab4be375df159fb4, type: 3}
-  m_Resource: {fileID: 8300000, guid: c8fae08dc7295304ab4be375df159fb4, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
+  m_Resource: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

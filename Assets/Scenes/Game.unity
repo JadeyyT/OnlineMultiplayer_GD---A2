@@ -154,8 +154,8 @@ MonoBehaviour:
   explosionClip: {fileID: 8300000, guid: e08b247765852d845945c83450f22d0b, type: 3}
   playerHurtClip: {fileID: 8300000, guid: fa33b10226a8a6a418e4242ba022109f, type: 3}
   obstacleBlockedClip: {fileID: 8300000, guid: 1e00561ac03ecf44cb2e8f9d389723d3, type: 3}
-  bubbleMoveSource: {fileID: 6375131014881400795, guid: b6565462afc1db94aa0356b26316debf, type: 3}
-  bubbleMoveClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
+  bubbleMoveSource: {fileID: 0}
+  bubbleMoveClip: {fileID: 0}
 --- !u!82 &65591453
 AudioSource:
   m_ObjectHideFlags: 0
@@ -166,9 +166,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
+  m_Resource: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

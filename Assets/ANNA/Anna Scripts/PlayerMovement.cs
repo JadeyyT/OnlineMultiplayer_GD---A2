@@ -36,6 +36,12 @@ public GameObject impactEffectPrefab;
 private bool isWobbling = false;
     private Vector3 originalLocalPosition;
 
+    public AudioSource moveSoundSource;
+public AudioClip moveSoundClip;
+
+private bool wasMoving = false; // To track changes
+
+
     private void Start()
 {
     if (!isLocalPlayer)
@@ -64,6 +70,13 @@ private bool isWobbling = false;
 
     bombsRemaining = totalBombs;
     UpdateBombsText();
+
+        if (moveSoundSource != null && moveSoundClip != null)
+    {
+        moveSoundSource.clip = moveSoundClip;
+        moveSoundSource.loop = true;
+    }
+
 }
 
 public int GetBombsRemaining()
@@ -83,13 +96,24 @@ public int GetBombsRemaining()
     {
         if (!trail.isPlaying) trail.Play();
         AudioManager.Instance?.PlayBubbleMove();
+       
     }
     else
     {
         if (trail.isPlaying) trail.Stop();
         AudioManager.Instance?.StopBubbleMove();
     }
+    
 }
+    if (moveSoundSource != null)
+    {
+        if (isMoving && !wasMoving && !moveSoundSource.isPlaying)
+            moveSoundSource.Play();
+        else if (!isMoving && wasMoving && moveSoundSource.isPlaying)
+            moveSoundSource.Stop();
+    }
+
+    wasMoving = isMoving;
 
 
        if (!isMoving && moveInput != Vector2.zero)
@@ -111,6 +135,8 @@ public int GetBombsRemaining()
         Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
         Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
     }
+
+
 StartCoroutine(Wobble());
     return;
 }
