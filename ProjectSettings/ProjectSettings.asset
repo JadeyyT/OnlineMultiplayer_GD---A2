@@ -688,8 +688,8 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: OnlineMultiplayer_GD-A2
-  metroPackageVersion: 
+  metroPackageName: OnlineMultiplayerGD-A2
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -697,7 +697,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: OnlineMultiplayer_GD-A2
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: OnlineMultiplayer_GD-A2
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -764,7 +764,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 2
+  activeInputHandler: 1
   windowsGamepadBackendHint: 0
   cloudProjectId: d02bd7f8-2526-4521-beaf-7c9016bce9a5
   framebufferDepthMemorylessMode: 0

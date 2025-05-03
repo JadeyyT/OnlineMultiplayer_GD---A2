@@ -82,6 +82,7 @@ MonoBehaviour:
   softBlockTilemap: {fileID: 0}
   hardBlockTilemap: {fileID: 0}
   obstacleTilemap: {fileID: 0}
+  boundaryTilemap: {fileID: 0}
   impactEffectPrefab: {fileID: 7830071243294499491, guid: 0438e35cb86e58e41944c6d08ecf0a37, type: 3}
   moveSoundSource: {fileID: 6375131014881400795}
   moveSoundClip: {fileID: 8300000, guid: 709c98a73c82aca428b617041d06489d, type: 3}

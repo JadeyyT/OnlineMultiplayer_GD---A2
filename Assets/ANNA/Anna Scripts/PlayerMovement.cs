@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using TMPro;
@@ -44,45 +44,63 @@ private bool wasMoving = false; // To track changes
 
 
     private void Start()
-{
-    if (!isLocalPlayer)
     {
-        GetComponent<PlayerInput>().enabled = false;
-        return;
-    }
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D is not attached to the player object.");
+            return;
+        }
 
-    // Automatically assign tilemaps from the scene
-    groundTilemap = GameObject.Find("GroundTilemap")?.GetComponent<Tilemap>();
-    softBlockTilemap = GameObject.Find("SoftBlockTilemap")?.GetComponent<Tilemap>();
-    hardBlockTilemap = GameObject.Find("HardBlockTilemap")?.GetComponent<Tilemap>();
-    obstacleTilemap = GameObject.Find("ObstacleTilemap")?.GetComponent<Tilemap>();
-    boundaryTilemap = GameObject.Find("BoundaryTilemap")?.GetComponent<Tilemap>();
 
-    // Debug to check for null
-    if (groundTilemap == null) Debug.LogError("GroundTilemap not found!");
-    if (softBlockTilemap == null) Debug.LogError("SoftBlockTilemap not found!");
-    if (hardBlockTilemap == null) Debug.LogError("HardBlockTilemap not found!");
-    if (obstacleTilemap == null) Debug.LogError("ObstacleTilemap not found!");
-    if (boundaryTilemap == null) Debug.LogError("BoundaryTilemap not found!");
+        // Automatically assign tilemaps from the scene
+        groundTilemap = GameObject.Find("GroundTilemap")?.GetComponent<Tilemap>();
+        softBlockTilemap = GameObject.Find("SoftBlockTilemap")?.GetComponent<Tilemap>();
+        hardBlockTilemap = GameObject.Find("HardBlockTilemap")?.GetComponent<Tilemap>();
+        obstacleTilemap = GameObject.Find("ObstacleTilemap")?.GetComponent<Tilemap>();
+        boundaryTilemap = GameObject.Find("BoundaryTilemap")?.GetComponent<Tilemap>();
 
-    // more movement setup
-    rb = GetComponent<Rigidbody2D>();
-    Vector3Int cell = groundTilemap.WorldToCell(transform.position);
-    targetPosition = groundTilemap.GetCellCenterWorld(cell);
-    rb.position = targetPosition;
+        // Debug to check if any tilemap is null
+        if (groundTilemap == null) Debug.LogError("GroundTilemap not found!");
+        if (softBlockTilemap == null) Debug.LogError("SoftBlockTilemap not found!");
+        if (hardBlockTilemap == null) Debug.LogError("HardBlockTilemap not found!");
+        if (obstacleTilemap == null) Debug.LogError("ObstacleTilemap not found!");
+        if (boundaryTilemap == null) Debug.LogError("BoundaryTilemap not found!");
 
-    bombsRemaining = totalBombs;
-    UpdateBombsText();
+        // Ensure that the Rigidbody2D is correctly initialized
+        if (!isLocalPlayer)
+        {
+            GetComponent<PlayerInput>().enabled = false;
+            return;
+        }
 
+        // Calculate and set the target position based on the groundTilemap
+        Vector3Int cell = groundTilemap.WorldToCell(transform.position);
+        targetPosition = groundTilemap.GetCellCenterWorld(cell);
+
+        // Set the initial position of the Rigidbody to the target position
+        rb.position = targetPosition;
+
+        // Initialize bomb count and text UI
+        bombsRemaining = totalBombs;
+        UpdateBombsText();
+
+        // Set up the movement sound if audio source and clip are assigned
         if (moveSoundSource != null && moveSoundClip != null)
-    {
-        moveSoundSource.clip = moveSoundClip;
-        moveSoundSource.loop = true;
+        {
+            moveSoundSource.clip = moveSoundClip;
+            moveSoundSource.loop = true;
+        }
+
+        // Optionally, initialize any other required logic, such as trail effects, etc.
+        if (trail != null)
+        {
+            trail.Stop();
+        }
     }
 
-}
 
-public int GetBombsRemaining()
+    public int GetBombsRemaining()
 {
     return bombsRemaining;
 }
@@ -174,6 +192,7 @@ StartCoroutine(Wobble());
         {
             moveInput = context.ReadValue<Vector2>();
 
+            // Normalize movement
             if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
             {
                 moveInput.y = 0;
@@ -184,12 +203,53 @@ StartCoroutine(Wobble());
                 moveInput.x = 0;
                 moveInput.y = Mathf.Sign(moveInput.y);
             }
+
+            // Send the movement to the server
+            CmdMovePlayer(moveInput);
         }
         else if (context.canceled)
         {
             moveInput = Vector2.zero;
+            CmdMovePlayer(moveInput);  // Tell server to stop moving
         }
     }
+
+    [Command]
+    void CmdMovePlayer(Vector2 direction)
+    {
+        // Move the player on the server
+        MovePlayer(direction);
+    }
+
+    // Server-side movement logic
+    void MovePlayer(Vector2 direction)
+    {
+        // ✅ DO NOT check isLocalPlayer here
+        Vector2 target = rb.position + direction * moveSpeed * Time.deltaTime;
+
+        rb.MovePosition(target);
+
+        // Send the updated position to all clients
+        RpcMovePlayer((Vector3)target);
+    }
+
+    [ClientRpc]
+    void RpcMovePlayer(Vector3 targetPosition)
+    {
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D is null in RpcMovePlayer.");
+            return;
+        }
+
+        // ✅ Corrected: Only move remote clients
+        if (!isLocalPlayer)
+        {
+            rb.MovePosition(targetPosition);  // <- was rb.position = ... (use MovePosition for smoothness)
+        }
+    }
+
+
 
     public void OnPlaceBomb(InputAction.CallbackContext context)
     {
