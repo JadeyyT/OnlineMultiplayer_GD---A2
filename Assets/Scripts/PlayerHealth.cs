@@ -1,33 +1,34 @@
 using UnityEngine;
+using Mirror;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : NetworkBehaviour
 {
+    [SyncVar]
     public int lives = 3;
 
-   public void TakeDamage()
-{
-    lives--;
-    
-    AudioManager.Instance?.PlayPlayerHurt(); 
-
-    Debug.Log("Player hit! Lives left: " + lives);
-
-    // Flash screen
-    if (ScreenFlash.Instance != null)
+    public void TakeDamage()
     {
-        ScreenFlash.Instance.Flash();
-    }
+        if (!isServer) return; // only the server reduces health
 
-    if (lives <= 0)
-    {
-        Die();
-    }
-}
+        lives--;
 
+        AudioManager.Instance?.PlayPlayerHurt();
+        Debug.Log("Player hit! Lives left: " + lives);
+
+        if (ScreenFlash.Instance != null)
+        {
+            ScreenFlash.Instance.Flash();
+        }
+
+        if (lives <= 0)
+        {
+            Die();
+        }
+    }
 
     private void Die()
     {
         Debug.Log("Player died.");
-        gameObject.SetActive(false); 
+        gameObject.SetActive(false);
     }
 }

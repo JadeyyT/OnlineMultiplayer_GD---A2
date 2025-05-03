@@ -56,7 +56,7 @@ private bool isWobbling = false;
     if (hardBlockTilemap == null) Debug.LogError("HardBlockTilemap not found!");
     if (obstacleTilemap == null) Debug.LogError("ObstacleTilemap not found!");
 
-    // Continue movement setup
+    // more movement setup
     rb = GetComponent<Rigidbody2D>();
     Vector3Int cell = groundTilemap.WorldToCell(transform.position);
     targetPosition = groundTilemap.GetCellCenterWorld(cell);
@@ -66,6 +66,10 @@ private bool isWobbling = false;
     UpdateBombsText();
 }
 
+public int GetBombsRemaining()
+{
+    return bombsRemaining;
+}
 
 
     private void Update()
