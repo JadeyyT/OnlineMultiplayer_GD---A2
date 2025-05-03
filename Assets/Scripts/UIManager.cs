@@ -7,15 +7,19 @@ public class UIManager : MonoBehaviour
     public TMP_Text livesText;
     public TMP_Text bombsText;
 
+    public GameObject deathPanel;
+    public GameObject deathText;
+
     private PlayerHealth localHealth;
     private PlayerMovement localMovement;
 
     private int lastLives = -1;
     private int lastBombs = -1;
+    private bool hasShownDeath = false;
 
     private void Update()
     {
-        // Find and cache local player once
+        // Find the local player if not yet found
         if (localHealth == null || localMovement == null)
         {
             foreach (var health in FindObjectsOfType<PlayerHealth>())
@@ -29,15 +33,24 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if (localHealth != null && livesText != null)
+        // Update lives
+        if (localHealth != null)
         {
-            if (localHealth.lives != lastLives)
+            if (livesText != null && localHealth.lives != lastLives)
             {
                 livesText.text = "Lives: " + localHealth.lives;
                 lastLives = localHealth.lives;
             }
+
+            // Show death screen once
+            if (!hasShownDeath && localHealth.lives <= 0)
+            {
+                ShowDeathScreen();
+                hasShownDeath = true;
+            }
         }
 
+        // Update bombs
         if (localMovement != null && bombsText != null)
         {
             int currentBombs = localMovement.GetBombsRemaining();
@@ -47,5 +60,14 @@ public class UIManager : MonoBehaviour
                 lastBombs = currentBombs;
             }
         }
+    }
+
+    private void ShowDeathScreen()
+    {
+        if (deathPanel != null)
+            deathPanel.SetActive(true);
+
+        if (deathText != null)
+            deathText.SetActive(true);
     }
 }
