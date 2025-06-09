@@ -7,16 +7,23 @@ public class ExplosionPart : MonoBehaviour
         Destroy(gameObject, 3f);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+  private void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.CompareTag("Player"))
     {
-        if (other.CompareTag("Player"))
+        PlayerMovement movement = other.GetComponent<PlayerMovement>();
+        if (movement != null && movement.isShielded)
         {
-            PlayerHealth player = other.GetComponent<PlayerHealth>();
+            Debug.Log("Player is shielded — explosion ignored.");
+            return; // Don't apply damage
+        }
 
-            if (player != null)
-            {
-                player.TakeDamage();
-            }
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        if (player != null)
+        {
+            player.TakeDamage();
         }
     }
+}
+
 }

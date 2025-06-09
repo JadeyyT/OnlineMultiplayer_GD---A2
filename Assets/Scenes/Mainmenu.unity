@@ -341,7 +341,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 384621356}
+      - m_Target: {fileID: 384621359}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: ToggleRulesPanel
         m_Mode: 1
@@ -1019,6 +1019,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 384621357}
+  - component: {fileID: 384621359}
   - component: {fileID: 384621356}
   - component: {fileID: 384621355}
   - component: {fileID: 384621354}
@@ -1106,9 +1107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b0c20ca67a50544878123785b253f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rulesPanel: {fileID: 1167338864}
-  backgroundBubbles: {fileID: 596386094}
-  clickSound: {fileID: 8300000, guid: 1e816af7174e60d4e85e99a0b54df55e, type: 3}
 --- !u!224 &384621357
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1229,6 +1227,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &384621359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384621352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 329e0a7529ad6ba47aa656a4ac47fbf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rulesPanel: {fileID: 1167338864}
+  backgroundBubbles: {fileID: 596386094}
+  clickSound: {fileID: 8300000, guid: 1e816af7174e60d4e85e99a0b54df55e, type: 3}
 --- !u!1 &491557548
 GameObject:
   m_ObjectHideFlags: 0
@@ -2702,7 +2715,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 384621356}
+      - m_Target: {fileID: 384621359}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: PlayGame
         m_Mode: 1
@@ -3416,7 +3429,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 384621356}
+      - m_Target: {fileID: 384621359}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: CloseRulesPanel
         m_Mode: 1
@@ -3624,7 +3637,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 384621356}
+      - m_Target: {fileID: 384621359}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: QuitGame
         m_Mode: 1

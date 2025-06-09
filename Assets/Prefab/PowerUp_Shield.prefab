@@ -147,4 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c3739b7cc19dfd4eaba5b26f150dc38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 3
+  bounceHeight: 0.15
+  bounceSpeed: 2
+  collectEffectPrefab: {fileID: 2419786517386018106, guid: 64bbf03e1f5e8004c813d044916baa8c, type: 3}
+  collectSound: {fileID: 8300000, guid: 04d746f20843b274fb44e359a39a9ba6, type: 3}

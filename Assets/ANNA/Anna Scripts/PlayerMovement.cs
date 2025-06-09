@@ -29,10 +29,16 @@ public class PlayerMovement : MonoBehaviour
     public Tilemap obstacleTilemap;
 
     private ParticleSystem trail;
-public GameObject impactEffectPrefab;
+    public GameObject impactEffectPrefab;
 
-private bool isWobbling = false;
+    private bool isWobbling = false;
     private Vector3 originalLocalPosition;
+
+    //power ups
+    public int lives = 1;
+    public bool isShielded = false;
+    private float originalSpeed;
+
 
     private void Start()
     {
@@ -50,48 +56,48 @@ private bool isWobbling = false;
     }
 
     private void Update()
-    
-{
-   if (trail != null)
-{
-    if (isMoving)
+
     {
-        if (!trail.isPlaying) trail.Play();
-        AudioManager.Instance?.PlayBubbleMove();
-    }
-    else
-    {
-        if (trail.isPlaying) trail.Stop();
-        AudioManager.Instance?.StopBubbleMove();
-    }
-}
+        if (trail != null)
+        {
+            if (isMoving)
+            {
+                if (!trail.isPlaying) trail.Play();
+                AudioManager.Instance?.PlayBubbleMove();
+            }
+            else
+            {
+                if (trail.isPlaying) trail.Stop();
+                AudioManager.Instance?.StopBubbleMove();
+            }
+        }
 
 
-       if (!isMoving && moveInput != Vector2.zero)
-{
-    Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
-    Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+        if (!isMoving && moveInput != Vector2.zero)
+        {
+            Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
+            Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
-    // Prevent movement into hard blocks or obstacles
-   if (obstacleTilemap.HasTile(nextCell) || hardBlockTilemap.HasTile(nextCell))
-{
-    AudioManager.Instance?.PlayObstacleBlocked();
+            // Prevent movement into hard blocks or obstacles
+            if (obstacleTilemap.HasTile(nextCell) || hardBlockTilemap.HasTile(nextCell))
+            {
+                AudioManager.Instance?.PlayObstacleBlocked();
 
-    if (impactEffectPrefab != null)
-    {
-        Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
-        Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
-    }
+                if (impactEffectPrefab != null)
+                {
+                    Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
+                    Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
+                }
 
-    StartCoroutine(Wobble());
-    return;
-}
+                StartCoroutine(Wobble());
+                return;
+            }
 
 
 
-    targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
-    isMoving = true;
-}
+            targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
+            isMoving = true;
+        }
 
     }
 
@@ -140,37 +146,76 @@ private bool isWobbling = false;
         }
     }
 
-   private void PlaceBomb()
-{
-    if (activeBombs >= bombLimit || bombsRemaining <= 0)
-        return;
-
-    Vector3Int cell = groundTilemap.WorldToCell(rb.position);
-    Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
-
-    GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
-
-     AudioManager.Instance?.PlayBombPlace();
-
-    Bomb bombScript = bomb.GetComponent<Bomb>();
-    if (bombScript != null)
+    private void PlaceBomb()
     {
-        bombScript.owner = this;
-        bombScript.hardBlockTilemap = hardBlockTilemap;
-        bombScript.softBlockTilemap = softBlockTilemap;
-        bombScript.obstacleTilemap = obstacleTilemap; 
+        if (activeBombs >= bombLimit || bombsRemaining <= 0)
+            return;
+
+        Vector3Int cell = groundTilemap.WorldToCell(rb.position);
+        Vector3 placePosition = groundTilemap.GetCellCenterWorld(cell);
+
+        GameObject bomb = Instantiate(bombPrefab, placePosition, Quaternion.identity);
+
+        AudioManager.Instance?.PlayBombPlace();
+
+        Bomb bombScript = bomb.GetComponent<Bomb>();
+        if (bombScript != null)
+        {
+            bombScript.owner = this;
+            bombScript.hardBlockTilemap = hardBlockTilemap;
+            bombScript.softBlockTilemap = softBlockTilemap;
+            bombScript.obstacleTilemap = obstacleTilemap;
+        }
+
+        activeBombs++;
+        bombsRemaining--;
+        UpdateBombsText();
     }
 
-    activeBombs++;
-    bombsRemaining--;
-    UpdateBombsText();
+   private Coroutine bombTextAnimRoutine;
+
+private void UpdateBombsText()
+{
+    if (bombsText != null)
+    {
+        bombsText.text = "Bombs: " + bombsRemaining;
+        if (bombTextAnimRoutine != null) StopCoroutine(bombTextAnimRoutine);
+        bombTextAnimRoutine = StartCoroutine(AnimateTextPunch(bombsText, Color.yellow));
+    }
 }
 
-    private void UpdateBombsText()
+private IEnumerator AnimateTextPunch(TMP_Text text, Color changeColor)
+{
+    Vector3 originalScale = text.transform.localScale;
+    Color originalColor = text.color;
+
+    float duration = 0.3f;
+    float elapsed = 0f;
+
+    while (elapsed < duration)
     {
-        if (bombsText != null)
-            bombsText.text = "Bombs: " + bombsRemaining;
+        float t = elapsed / duration;
+        text.transform.localScale = Vector3.Lerp(originalScale, originalScale * 1.4f, t);
+        text.color = Color.Lerp(originalColor, changeColor, t);
+        elapsed += Time.deltaTime;
+        yield return null;
     }
+
+    yield return new WaitForSeconds(0.1f);
+
+    elapsed = 0f;
+    while (elapsed < duration)
+    {
+        float t = elapsed / duration;
+        text.transform.localScale = Vector3.Lerp(originalScale * 1.4f, originalScale, t);
+        text.color = Color.Lerp(changeColor, originalColor, t);
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    text.transform.localScale = originalScale;
+    text.color = originalColor;
+}
 
     public void OnBombExploded()
     {
@@ -210,4 +255,56 @@ private bool isWobbling = false;
         transform.localPosition = originalLocalPosition;
         isWobbling = false;
     }
+    
+    public void ApplyPowerUp(PowerUp.PowerUpType type)
+{
+    switch (type)
+    {
+        case PowerUp.PowerUpType.ExtraLife:
+    PlayerHealth health = GetComponent<PlayerHealth>();
+    if (health != null)
+    {
+        health.AddLife();
+    }
+    break;
+
+
+     case PowerUp.PowerUpType.ExtraBomb:
+    bombLimit++;
+    bombsRemaining++; // Add an extra bomb to the pool
+    Debug.Log($"Bomb limit increased to: {bombLimit}, Bombs remaining: {bombsRemaining}");
+    UpdateBombsText();
+    break;
+
+
+
+        case PowerUp.PowerUpType.SpeedBoost:
+            StartCoroutine(SpeedBoost());
+            Debug.Log("Speed boost activated!");
+            
+            break;
+
+        case PowerUp.PowerUpType.Shield:
+            StartCoroutine(ShieldRoutine());
+            Debug.Log("Shield activated!");
+            
+            break;
+    }
+}
+private IEnumerator SpeedBoost()
+{
+    originalSpeed = moveSpeed;
+    moveSpeed *= 1.5f;
+    yield return new WaitForSeconds(5f); // last 5 seconds
+    moveSpeed = originalSpeed;
+}
+
+private IEnumerator ShieldRoutine()
+{
+    isShielded = true;
+    // Optional: enable visual cue for shield here
+    yield return new WaitForSeconds(5f); // last 5 seconds
+    isShielded = false;
+}
+
 }

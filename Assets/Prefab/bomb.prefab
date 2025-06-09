@@ -101,7 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd36db6653676f47aa45ed398457e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacleDestroyEffectPrefab: {fileID: 20542848044043901, guid: ed14a4341912b5a4d9f34c551eaf63ff, type: 3}
   explosionEffectPrefab: {fileID: 20542848044043901, guid: ed14a4341912b5a4d9f34c551eaf63ff, type: 3}
   explosionCenterPrefab: {fileID: 2284979787892535102, guid: 8cc864f123059a54facb597509ba26d8, type: 3}
   explosionBodyPrefab: {fileID: 4905186635772619803, guid: 5e7fd066540a2414c80858d473b946ef, type: 3}
@@ -112,14 +111,11 @@ MonoBehaviour:
   owner: {fileID: 0}
   explosionRange: 1
   powerUpPrefabs:
-  - {fileID: 5048949951597142662, guid: d2de3ce6a4f7c21498da17beb75326e3, type: 3}
-  - {fileID: 4181976970421602349, guid: f1b131b854889cb4b99a427ff57d99b4, type: 3}
   - {fileID: 6528435491454690237, guid: 9f45544f9ba42f246919e047b142e46a, type: 3}
   - {fileID: 7165422023980632430, guid: cdfdcf8dc1c55634abe4a811a3569208, type: 3}
-  - {fileID: 7029704165424321472, guid: 32b75ca9420cf464687d556f21e2409d, type: 3}
   - {fileID: 5068408901645217361, guid: cbf32474a5b03c04680ad45172c54857, type: 3}
   - {fileID: 4254106647867256680, guid: 9c4137436489ea64399248029ef34f47, type: 3}
-  powerUpSpawnChance: 0.68
+  powerUpSpawnChance: 0.756
 --- !u!61 &3477856775460565642
 BoxCollider2D:
   m_ObjectHideFlags: 0
