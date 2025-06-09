@@ -73,22 +73,20 @@ private bool isWobbling = false;
     Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
     // Prevent movement into hard blocks or obstacles
-    if (obstacleTilemap.HasTile(nextCell))
+   if (obstacleTilemap.HasTile(nextCell) || hardBlockTilemap.HasTile(nextCell))
 {
-    // Play impact sound
     AudioManager.Instance?.PlayObstacleBlocked();
 
-    
-
-    // Spawn impact effect
     if (impactEffectPrefab != null)
     {
         Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
         Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
     }
-StartCoroutine(Wobble());
+
+    StartCoroutine(Wobble());
     return;
 }
+
 
 
     targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
