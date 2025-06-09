@@ -39,7 +39,7 @@ private void Start()
 private IEnumerator VisualCountdown()
 {
     float timer = 0f;
-    float flashInterval = 0.2f;
+  
 
     while (timer < fuseTime)
     {

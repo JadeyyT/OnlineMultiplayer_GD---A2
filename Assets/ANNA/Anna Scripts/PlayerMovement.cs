@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -37,7 +38,18 @@ public class PlayerMovement : MonoBehaviour
     //power ups
     public int lives = 1;
     public bool isShielded = false;
-    private float originalSpeed;
+   
+
+public GameObject floatingHeartPrefab;
+    public GameObject floatingBombPrefab; 
+public GameObject shieldEffectPrefab;
+    public GameObject activeShieldEffect;
+public GameObject speedTailPrefab;
+    private GameObject activeSpeedTail; 
+public Transform speedTailAnchor;
+public GameObject shieldEffectObject;
+public GameObject speedEffectObject; 
+private float originalSpeed;
 
 
     private void Start()
@@ -256,55 +268,210 @@ private IEnumerator AnimateTextPunch(TMP_Text text, Color changeColor)
         isWobbling = false;
     }
     
-    public void ApplyPowerUp(PowerUp.PowerUpType type)
+   public void ApplyPowerUp(PowerUp.PowerUpType type)
 {
     switch (type)
     {
         case PowerUp.PowerUpType.ExtraLife:
-    PlayerHealth health = GetComponent<PlayerHealth>();
-    if (health != null)
-    {
-        health.AddLife();
-    }
-    break;
+            PlayerHealth health = GetComponent<PlayerHealth>();
+            if (health != null)
+            {
+                health.AddLife();
+                StartCoroutine(SpawnFloatingWorldText("+1 ❤️", Color.red));
+                SpawnFloatingIcon(floatingHeartPrefab);
+            }
+            break;
 
-
-     case PowerUp.PowerUpType.ExtraBomb:
-    bombLimit++;
-    bombsRemaining++; // Add an extra bomb to the pool
-    Debug.Log($"Bomb limit increased to: {bombLimit}, Bombs remaining: {bombsRemaining}");
-    UpdateBombsText();
-    break;
-
-
+        case PowerUp.PowerUpType.ExtraBomb:
+            bombLimit++;
+            bombsRemaining++;
+            UpdateBombsText();
+            StartCoroutine(SpawnFloatingWorldText("+1 💣", Color.yellow));
+            SpawnFloatingIcon(floatingBombPrefab);
+            break;
 
         case PowerUp.PowerUpType.SpeedBoost:
             StartCoroutine(SpeedBoost());
-            Debug.Log("Speed boost activated!");
-            
             break;
 
         case PowerUp.PowerUpType.Shield:
             StartCoroutine(ShieldRoutine());
-            Debug.Log("Shield activated!");
-            
             break;
     }
 }
-private IEnumerator SpeedBoost()
+
+private IEnumerator SpawnFloatingWorldText(string text, Color color)
+{
+    GameObject go = new GameObject("FloatingText");
+    go.transform.position = transform.position + new Vector3(0, 0.7f, 0);
+
+    TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
+    textMesh.text = text;
+    textMesh.fontSize = 2;
+    textMesh.color = color;
+    textMesh.alignment = TextAlignmentOptions.Center;
+    textMesh.sortingOrder = 100;
+
+    float duration = 1f;
+    float elapsed = 0f;
+    Vector3 startPos = go.transform.position;
+
+    while (elapsed < duration)
+    {
+        float t = elapsed / duration;
+        go.transform.position = startPos + Vector3.up * t * 1f;
+        textMesh.alpha = Mathf.Lerp(1f, 0f, t);
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    Destroy(go);
+}
+
+private void SpawnFloatingIcon(GameObject prefab)
+{
+    if (prefab == null) return;
+
+    GameObject icon = Instantiate(prefab, transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+
+    StartCoroutine(FadeAndDestroy(icon, 1.2f));
+}
+
+private IEnumerator FadeAndDestroy(GameObject obj, float duration)
+{
+    float elapsed = 0f;
+    Vector3 startPos = obj.transform.position;
+    SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+    if (sr == null) sr = obj.GetComponentInChildren<SpriteRenderer>();
+
+    Color startColor = sr != null ? sr.color : Color.white;
+
+    while (elapsed < duration)
+    {
+        float t = elapsed / duration;
+        obj.transform.position = startPos + Vector3.up * t * 0.5f;
+
+        if (sr != null)
+        {
+            sr.color = new Color(startColor.r, startColor.g, startColor.b, 1f - t);
+        }
+
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    Destroy(obj);
+}
+
+   private IEnumerator SpeedBoost()
 {
     originalSpeed = moveSpeed;
     moveSpeed *= 1.5f;
-    yield return new WaitForSeconds(5f); // last 5 seconds
+
+    if (speedEffectObject != null)
+    {
+        speedEffectObject.SetActive(true);
+        speedEffectObject.transform.localScale = Vector3.one;
+        SetSpeedEffectAlpha(1f);
+    }
+
+    yield return new WaitForSeconds(3.5f); // Stay normal for 3.5 seconds
+
+    // Pulse animation for final 1.5s
+    float pulseDuration = 1.5f;
+    float elapsed = 0f;
+
+    while (elapsed < pulseDuration)
+    {
+        float t = Mathf.PingPong(elapsed * 4f, 1f);
+        float scale = Mathf.Lerp(1f, 1.2f, t);
+        float alpha = Mathf.Lerp(1f, 0.4f, t);
+
+        if (speedEffectObject != null)
+        {
+            speedEffectObject.transform.localScale = Vector3.one * scale;
+            SetSpeedEffectAlpha(alpha);
+        }
+
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    // Cleanup
+    if (speedEffectObject != null)
+    {
+        speedEffectObject.SetActive(false);
+    }
+
     moveSpeed = originalSpeed;
 }
+private void SetSpeedEffectAlpha(float alpha)
+{
+    SpriteRenderer sr = speedEffectObject.GetComponent<SpriteRenderer>();
+    if (sr != null)
+    {
+        Color color = sr.color;
+        color.a = alpha;
+        sr.color = color;
+    }
+}
+
 
 private IEnumerator ShieldRoutine()
 {
     isShielded = true;
-    // Optional: enable visual cue for shield here
-    yield return new WaitForSeconds(5f); // last 5 seconds
+
+    if (shieldEffectObject != null)
+    {
+        shieldEffectObject.SetActive(true);
+
+        // Reset scale and opacity
+        shieldEffectObject.transform.localScale = Vector3.one;
+        SetShieldAlpha(1f);
+    }
+
+    yield return new WaitForSeconds(3.5f); // Normal phase
+
+    // Start pulsing for the last 1.5 seconds
+    float pulseDuration = 1.5f;
+    float elapsed = 0f;
+
+    while (elapsed < pulseDuration)
+    {
+        float t = Mathf.PingPong(elapsed * 4f, 1f); // Oscillate 4 times over 1.5s
+        float scale = Mathf.Lerp(1f, 1.2f, t); // Scale between 1x and 1.2x
+        float alpha = Mathf.Lerp(1f, 0.4f, t); // Fade between full and semi-transparent
+
+        if (shieldEffectObject != null)
+        {
+            shieldEffectObject.transform.localScale = Vector3.one * scale;
+            SetShieldAlpha(alpha);
+        }
+
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    // End shield
+    if (shieldEffectObject != null)
+    {
+        shieldEffectObject.SetActive(false);
+    }
+
     isShielded = false;
 }
+private void SetShieldAlpha(float alpha)
+{
+    SpriteRenderer sr = shieldEffectObject.GetComponent<SpriteRenderer>();
+    if (sr != null)
+    {
+        Color color = sr.color;
+        color.a = alpha;
+        sr.color = color;
+    }
+}
+
+
+
 
 }
