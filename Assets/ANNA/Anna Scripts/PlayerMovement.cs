@@ -135,21 +135,31 @@ public Transform spriteTransform;
         }
     }
 
-  private void UpdateFacingDirection(Vector2 direction)
+private void UpdateFacingDirection(Vector2 direction)
 {
     if (spriteTransform == null) return;
 
     if (direction.x > 0)
     {
-        // RIGHT — flip from left-facing to right-facing
-        spriteTransform.rotation = Quaternion.Euler(0, 180, 0);
+        spriteTransform.rotation = Quaternion.Euler(0, 180, 0); // Flipped to right
+
+        // Fix shield
+        if (shieldEffectObject != null)
+        {
+            shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 180, 0); // counter-flip to face camera
+        }
     }
     else if (direction.x < 0)
     {
-        // LEFT — stay as default left-facing
-        spriteTransform.rotation = Quaternion.Euler(0, 0, 0);
+        spriteTransform.rotation = Quaternion.Euler(0, 0, 0); // Default left
+
+        if (shieldEffectObject != null)
+        {
+            shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 0, 0); // normal
+        }
     }
 }
+
 
 
 
@@ -384,7 +394,8 @@ private IEnumerator GrowTemporarily()
         yield return null;
     }
 
-    // Shrink back smoothly
+        // Shrink back smoothly
+    yield return StartCoroutine(PreShrinkPulseEffect());
     t = 0f;
     while (t < shrinkTime)
     {
@@ -428,6 +439,25 @@ private float EaseInBack(float x)
     float c3 = c1 + 1;
 
     return c3 * x * x * x - c1 * x * x;
+}
+private IEnumerator PreShrinkPulseEffect()
+{
+    float pulseTime = 0.5f;
+    float elapsed = 0f;
+    float pulseSpeed = 8f; // how fast the pulsing goes
+    float pulseStrength = 0.1f; // how big the scale stretches
+
+    Vector3 original = transform.localScale;
+
+    while (elapsed < pulseTime)
+    {
+        float scaleOffset = Mathf.Sin(elapsed * pulseSpeed) * pulseStrength;
+        transform.localScale = original + new Vector3(scaleOffset, scaleOffset, 0f);
+        elapsed += Time.deltaTime;
+        yield return null;
+    }
+
+    transform.localScale = original;
 }
 
 private IEnumerator SpawnFloatingWorldText(string text, Color color)

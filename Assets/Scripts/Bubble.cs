@@ -37,7 +37,8 @@ public class Bubble : MonoBehaviour
 
             if (popEffectPrefab != null)
             {
-                Instantiate(popEffectPrefab, transform.position, Quaternion.identity);
+                GameObject popFX = Instantiate(popEffectPrefab, transform.position, Quaternion.identity);
+                Destroy(popFX, 1f); // Auto-destroy the pop effect after 1 second
             }
 
             StartCoroutine(PopAndDestroy(true));
@@ -48,7 +49,13 @@ public class Bubble : MonoBehaviour
     {
         if (!isPopping)
         {
-            StartCoroutine(PopAndDestroy(false)); // Do not play sound on timeout
+            if (popEffectPrefab != null)
+            {
+                GameObject popFX = Instantiate(popEffectPrefab, transform.position, Quaternion.identity);
+                Destroy(popFX, 1f); // Also destroy if bubble expires on its own
+            }
+
+            StartCoroutine(PopAndDestroy(false));
         }
     }
 
