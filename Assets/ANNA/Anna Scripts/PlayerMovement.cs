@@ -57,7 +57,8 @@ private BoxCollider2D boxCollider;
 public float grownSpeedMultiplier = 0.65f;
   private Coroutine growRoutine;
 private float growDurationRemaining;
-private Vector3 originalScale;
+    private Vector3 originalScale;
+public Transform spriteTransform;
     private void Start()
     {
         trail = GetComponentInChildren<ParticleSystem>();
@@ -92,7 +93,8 @@ private Vector3 originalScale;
 
 
         if (!isMoving && moveInput != Vector2.zero)
-        {
+        {  UpdateFacingDirection(moveInput);
+
             Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
             Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
@@ -132,6 +134,24 @@ private Vector3 originalScale;
             }
         }
     }
+
+  private void UpdateFacingDirection(Vector2 direction)
+{
+    if (spriteTransform == null) return;
+
+    if (direction.x > 0)
+    {
+        // RIGHT — flip from left-facing to right-facing
+        spriteTransform.rotation = Quaternion.Euler(0, 180, 0);
+    }
+    else if (direction.x < 0)
+    {
+        // LEFT — stay as default left-facing
+        spriteTransform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+}
+
+
 
     public void OnMove(InputAction.CallbackContext context)
     {

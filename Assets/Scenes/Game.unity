@@ -1080,6 +1080,7 @@ MonoBehaviour:
   shieldEffectObject: {fileID: 1616023768}
   speedEffectObject: {fileID: 1892994746}
   grownSpeedMultiplier: 0.65
+  spriteTransform: {fileID: 622715699}
 --- !u!114 &622715705
 MonoBehaviour:
   m_ObjectHideFlags: 0
