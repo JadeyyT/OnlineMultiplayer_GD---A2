@@ -1,29 +1,34 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int lives = 3;
-    
-    public void AddLife()
-{
-    lives++;
-    Debug.Log("Extra life gained! Total lives: " + lives);
-   
+    private PlayerMovement movement;
+    private bool isInvincible = false;
+    public float invincibilityTime = 0.5f; // Half a second of invincibility
 
-    // Optional: show UI feedback here (like update TMP_Text or play animation)
-    
-}
-
-
-   public void TakeDamage()
+    private void Awake()
     {
+        movement = GetComponent<PlayerMovement>();
+    }
+
+    public void AddLife()
+    {
+        lives++;
+        Debug.Log("Extra life gained! Total lives: " + lives);
+    }
+
+    public void TakeDamage()
+    {
+        if (isInvincible || (movement != null && movement.isShielded)) return;
+
         lives--;
+        isInvincible = true;
 
         AudioManager.Instance?.PlayPlayerHurt();
-
         Debug.Log("Player hit! Lives left: " + lives);
 
-        // Flash screen
         if (ScreenFlash.Instance != null)
         {
             ScreenFlash.Instance.Flash();
@@ -33,8 +38,17 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            StartCoroutine(InvincibilityCooldown());
+        }
     }
 
+    private IEnumerator InvincibilityCooldown()
+    {
+        yield return new WaitForSeconds(invincibilityTime);
+        isInvincible = false;
+    }
 
     private void Die()
     {

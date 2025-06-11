@@ -51,7 +51,13 @@ public GameObject shieldEffectObject;
 public GameObject speedEffectObject; 
 private float originalSpeed;
 
-
+private Vector2 originalColliderSize;
+private Vector2 originalColliderOffset;
+private BoxCollider2D boxCollider;
+public float grownSpeedMultiplier = 0.65f;
+  private Coroutine growRoutine;
+private float growDurationRemaining;
+private Vector3 originalScale;
     private void Start()
     {
         trail = GetComponentInChildren<ParticleSystem>();
@@ -298,6 +304,110 @@ private IEnumerator AnimateTextPunch(TMP_Text text, Color changeColor)
             StartCoroutine(ShieldRoutine());
             break;
     }
+}
+  
+
+private void Awake()
+{
+    originalScale = transform.localScale;
+
+    boxCollider = GetComponent<BoxCollider2D>();
+    if (boxCollider != null)
+    {
+        originalColliderSize = boxCollider.size;
+        originalColliderOffset = boxCollider.offset;
+    }
+}
+
+
+public void ApplyBubbleGrow(float additionalDuration)
+{
+    if (isShielded)
+        return; // 🛡️ Ignore bubble effect if shield is active
+
+    growDurationRemaining += additionalDuration;
+
+    if (growRoutine == null)
+    {
+        growRoutine = StartCoroutine(GrowTemporarily());
+    }
+}
+
+
+private IEnumerator GrowTemporarily()
+{
+    Vector3 targetScale = originalScale * 2f;
+    float growTime = 0.25f;
+    float shrinkTime = 0.25f;
+
+    originalSpeed = moveSpeed;
+    moveSpeed = originalSpeed * grownSpeedMultiplier;
+
+    // Smooth grow
+    float t = 0f;
+    while (t < growTime)
+    {
+        float eased = EaseOutElastic(t / growTime);
+        transform.localScale = Vector3.LerpUnclamped(originalScale, targetScale, eased);
+        UpdateColliderSize(eased);
+        t += Time.deltaTime;
+        yield return null;
+    }
+
+    transform.localScale = targetScale;
+    UpdateColliderSize(1f);
+
+    // Wait and keep extending if new bubbles are picked up
+    while (growDurationRemaining > 0f)
+    {
+        growDurationRemaining -= Time.deltaTime;
+        yield return null;
+    }
+
+    // Shrink back smoothly
+    t = 0f;
+    while (t < shrinkTime)
+    {
+        float eased = EaseInBack(t / shrinkTime);
+        transform.localScale = Vector3.LerpUnclamped(targetScale, originalScale, eased);
+        UpdateColliderSize(1f - eased);
+        t += Time.deltaTime;
+        yield return null;
+    }
+
+    transform.localScale = originalScale;
+    UpdateColliderSize(0f);
+    moveSpeed = originalSpeed;
+
+    growRoutine = null;
+    growDurationRemaining = 0f; // Reset
+}
+
+private void UpdateColliderSize(float growPercent)
+{
+    if (boxCollider == null) return;
+
+    float scaleFactor = Mathf.Lerp(1f, 2f, growPercent);
+    boxCollider.size = originalColliderSize * scaleFactor;
+    boxCollider.offset = originalColliderOffset * scaleFactor;
+}
+
+// Bouncy ease-out (like a spring expanding)
+private float EaseOutElastic(float x)
+{
+    float c4 = (2 * Mathf.PI) / 3;
+
+    return x == 0 ? 0 : x == 1 ? 1 :
+        Mathf.Pow(2, -10 * x) * Mathf.Sin((x * 10 - 0.75f) * c4) + 1;
+}
+
+// Slightly bouncy ease-in-back (for dramatic shrink)
+private float EaseInBack(float x)
+{
+    float c1 = 1.70158f;
+    float c3 = c1 + 1;
+
+    return c3 * x * x * x - c1 * x * x;
 }
 
 private IEnumerator SpawnFloatingWorldText(string text, Color color)

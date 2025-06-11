@@ -10,7 +10,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip playerHurtClip;
     public AudioClip obstacleBlockedClip;
      public AudioSource bubbleMoveSource;
-public AudioClip bubbleMoveClip;
+    public AudioClip bubbleMoveClip;
+public AudioClip bubblePopClip;
+
 
     private void Awake()
     {
@@ -28,7 +30,8 @@ public AudioClip bubbleMoveClip;
     public void PlayExplosion() => PlaySFX(explosionClip);
     public void PlayPlayerHurt() => PlaySFX(playerHurtClip);
     public void PlayObstacleBlocked() => PlaySFX(obstacleBlockedClip);
-   
+   public void PlayBubblePop() => PlaySFX(bubblePopClip);
+
 
 public void PlayBubbleMove()
 {
