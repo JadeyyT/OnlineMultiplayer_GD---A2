@@ -311,6 +311,9 @@ MonoBehaviour:
   countdownText: {fileID: 413650000}
   playersToFreeze:
   - {fileID: 622715704}
+  sfxSource: {fileID: 65591453}
+  countdownBeep: {fileID: 8300000, guid: f09667e0f5e64334eb320427668cedb9, type: 3}
+  goSound: {fileID: 8300000, guid: e7643123ff4900b48979f6074187ac49, type: 3}
 --- !u!114 &339903757
 MonoBehaviour:
   m_ObjectHideFlags: 0

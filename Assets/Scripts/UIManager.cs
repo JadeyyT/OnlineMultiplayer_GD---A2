@@ -9,6 +9,10 @@ public class UIManager : MonoBehaviour
     public TMP_Text countdownText;
     public PlayerMovement[] playersToFreeze;
 
+    public AudioSource sfxSource;
+    public AudioClip countdownBeep;
+    public AudioClip goSound;
+
     private int lastLives = -1;
     private Coroutine livesAnimRoutine;
 
@@ -27,11 +31,13 @@ public class UIManager : MonoBehaviour
         for (int i = 3; i > 0; i--)
         {
             countdownText.text = i.ToString();
+            PlaySFX(countdownBeep);
             yield return StartCoroutine(AnimateCountdownPunch(countdownText));
             yield return new WaitForSeconds(0.3f);
         }
 
         countdownText.text = "GO!";
+        PlaySFX(goSound);
         yield return StartCoroutine(AnimateCountdownPunch(countdownText));
         yield return new WaitForSeconds(0.5f);
 
@@ -39,6 +45,12 @@ public class UIManager : MonoBehaviour
 
         foreach (var player in playersToFreeze)
             player.enabled = true;
+    }
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (clip != null && sfxSource != null)
+            sfxSource.PlayOneShot(clip);
     }
 
     private IEnumerator AnimateCountdownPunch(TMP_Text text)
