@@ -23,7 +23,6 @@ public class PlayerMovement : MonoBehaviour
 
     public TMP_Text bombsText;
 
-    // New tilemap references
     public Tilemap groundTilemap;
     public Tilemap softBlockTilemap;
     public Tilemap hardBlockTilemap;
@@ -35,90 +34,98 @@ public class PlayerMovement : MonoBehaviour
     private bool isWobbling = false;
     private Vector3 originalLocalPosition;
 
-    //power ups
     public int lives = 1;
     public bool isShielded = false;
-   
 
-public GameObject floatingHeartPrefab;
+    public GameObject floatingHeartPrefab;
     public GameObject floatingBombPrefab; 
-public GameObject shieldEffectPrefab;
+    public GameObject shieldEffectPrefab;
     public GameObject activeShieldEffect;
-public GameObject speedTailPrefab;
+    public GameObject speedTailPrefab;
     private GameObject activeSpeedTail; 
-public Transform speedTailAnchor;
-public GameObject shieldEffectObject;
-public GameObject speedEffectObject; 
-private float originalSpeed;
+    public Transform speedTailAnchor;
+    public GameObject shieldEffectObject;
+    public GameObject speedEffectObject; 
+    public GameObject growGlowEffect; // NEW: Reference to glow GameObject
 
-private Vector2 originalColliderSize;
-private Vector2 originalColliderOffset;
-private BoxCollider2D boxCollider;
-public float grownSpeedMultiplier = 0.65f;
-  private Coroutine growRoutine;
-private float growDurationRemaining;
+    private float originalSpeed;
+    private Vector2 originalColliderSize;
+    private Vector2 originalColliderOffset;
+    private BoxCollider2D boxCollider;
+    public float grownSpeedMultiplier = 0.65f;
+    private Coroutine growRoutine;
+    private float growDurationRemaining;
     private Vector3 originalScale;
-public Transform spriteTransform;
+    public Transform spriteTransform;
+
+    public bool isGrown => growRoutine != null;
+
     private void Start()
     {
         trail = GetComponentInChildren<ParticleSystem>();
-
         rb = GetComponent<Rigidbody2D>();
-
-        // Snap player to starting tile
         Vector3Int cell = groundTilemap.WorldToCell(transform.position);
         targetPosition = groundTilemap.GetCellCenterWorld(cell);
         rb.position = targetPosition;
-
         bombsRemaining = totalBombs;
         UpdateBombsText();
     }
 
     private void Update()
-
     {
         if (trail != null)
         {
-            if (isMoving)
-            {
-                if (!trail.isPlaying) trail.Play();
-                AudioManager.Instance?.PlayBubbleMove();
-            }
-            else
-            {
-                if (trail.isPlaying) trail.Stop();
-                AudioManager.Instance?.StopBubbleMove();
-            }
+            if (isMoving) { if (!trail.isPlaying) trail.Play(); AudioManager.Instance?.PlayBubbleMove(); }
+            else { if (trail.isPlaying) trail.Stop(); AudioManager.Instance?.StopBubbleMove(); }
         }
 
-
         if (!isMoving && moveInput != Vector2.zero)
-        {  UpdateFacingDirection(moveInput);
-
+        {
+            UpdateFacingDirection(moveInput);
             Vector3Int currentCell = groundTilemap.WorldToCell(rb.position);
             Vector3Int nextCell = currentCell + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
-            // Prevent movement into hard blocks or obstacles
-            if (obstacleTilemap.HasTile(nextCell) || hardBlockTilemap.HasTile(nextCell))
+            bool blocked = obstacleTilemap.HasTile(nextCell) || hardBlockTilemap.HasTile(nextCell);
+
+            if (isGrown)
+            {
+                if (Mathf.Abs(moveInput.x) > 0)
+                {
+                    Vector3Int above = nextCell + Vector3Int.up;
+                    Vector3Int below = nextCell + Vector3Int.down;
+                    if ((obstacleTilemap.HasTile(above) || hardBlockTilemap.HasTile(above)) &&
+                        (obstacleTilemap.HasTile(below) || hardBlockTilemap.HasTile(below)))
+                    {
+                        blocked = true;
+                    }
+                }
+                else if (Mathf.Abs(moveInput.y) > 0)
+                {
+                    Vector3Int left = nextCell + Vector3Int.left;
+                    Vector3Int right = nextCell + Vector3Int.right;
+                    if ((obstacleTilemap.HasTile(left) || hardBlockTilemap.HasTile(left)) &&
+                        (obstacleTilemap.HasTile(right) || hardBlockTilemap.HasTile(right)))
+                    {
+                        blocked = true;
+                    }
+                }
+            }
+
+            if (blocked)
             {
                 AudioManager.Instance?.PlayObstacleBlocked();
-
                 if (impactEffectPrefab != null)
                 {
                     Vector3 impactPos = groundTilemap.GetCellCenterWorld(nextCell);
                     Instantiate(impactEffectPrefab, impactPos, Quaternion.identity);
                 }
-
                 StartCoroutine(Wobble());
                 return;
             }
 
-
-
             targetPosition = groundTilemap.GetCellCenterWorld(nextCell);
             isMoving = true;
         }
-
     }
 
     private void FixedUpdate()
@@ -126,7 +133,6 @@ public Transform spriteTransform;
         if (isMoving)
         {
             rb.position = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
-
             if (Vector2.Distance(rb.position, targetPosition) < 0.01f)
             {
                 rb.position = targetPosition;
@@ -135,33 +141,20 @@ public Transform spriteTransform;
         }
     }
 
-private void UpdateFacingDirection(Vector2 direction)
-{
-    if (spriteTransform == null) return;
-
-    if (direction.x > 0)
+    private void UpdateFacingDirection(Vector2 direction)
     {
-        spriteTransform.rotation = Quaternion.Euler(0, 180, 0); // Flipped to right
-
-        // Fix shield
-        if (shieldEffectObject != null)
+        if (spriteTransform == null) return;
+        if (direction.x > 0)
         {
-            shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 180, 0); // counter-flip to face camera
+            spriteTransform.rotation = Quaternion.Euler(0, 180, 0);
+            if (shieldEffectObject != null) shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
+        }
+        else if (direction.x < 0)
+        {
+            spriteTransform.rotation = Quaternion.Euler(0, 0, 0);
+            if (shieldEffectObject != null) shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
     }
-    else if (direction.x < 0)
-    {
-        spriteTransform.rotation = Quaternion.Euler(0, 0, 0); // Default left
-
-        if (shieldEffectObject != null)
-        {
-            shieldEffectObject.transform.localRotation = Quaternion.Euler(0, 0, 0); // normal
-        }
-    }
-}
-
-
-
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -364,56 +357,58 @@ public void ApplyBubbleGrow(float additionalDuration)
 }
 
 
-private IEnumerator GrowTemporarily()
-{
-    Vector3 targetScale = originalScale * 2f;
-    float growTime = 0.25f;
-    float shrinkTime = 0.25f;
-
-    originalSpeed = moveSpeed;
-    moveSpeed = originalSpeed * grownSpeedMultiplier;
-
-    // Smooth grow
-    float t = 0f;
-    while (t < growTime)
+ private IEnumerator GrowTemporarily()
     {
-        float eased = EaseOutElastic(t / growTime);
-        transform.localScale = Vector3.LerpUnclamped(originalScale, targetScale, eased);
-        UpdateColliderSize(eased);
-        t += Time.deltaTime;
-        yield return null;
+        Vector3 targetScale = originalScale * 2f;
+        float growTime = 0.25f;
+        float shrinkTime = 0.25f;
+
+        originalSpeed = moveSpeed;
+        moveSpeed = originalSpeed * grownSpeedMultiplier;
+
+        float t = 0f;
+        while (t < growTime)
+        {
+            float eased = EaseOutElastic(t / growTime);
+            transform.localScale = Vector3.LerpUnclamped(originalScale, targetScale, eased);
+            UpdateColliderSize(eased);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = targetScale;
+        UpdateColliderSize(1f);
+
+        if (growGlowEffect != null)
+            growGlowEffect.SetActive(true);
+
+        while (growDurationRemaining > 0f)
+        {
+            growDurationRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        yield return StartCoroutine(PreShrinkPulseEffect());
+        t = 0f;
+        while (t < shrinkTime)
+        {
+            float eased = EaseInBack(t / shrinkTime);
+            transform.localScale = Vector3.LerpUnclamped(targetScale, originalScale, eased);
+            UpdateColliderSize(1f - eased);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = originalScale;
+        UpdateColliderSize(0f);
+        moveSpeed = originalSpeed;
+
+        if (growGlowEffect != null)
+            growGlowEffect.SetActive(false);
+
+        growRoutine = null;
+        growDurationRemaining = 0f;
     }
-
-    transform.localScale = targetScale;
-    UpdateColliderSize(1f);
-
-    // Wait and keep extending if new bubbles are picked up
-    while (growDurationRemaining > 0f)
-    {
-        growDurationRemaining -= Time.deltaTime;
-        yield return null;
-    }
-
-        // Shrink back smoothly
-    yield return StartCoroutine(PreShrinkPulseEffect());
-    t = 0f;
-    while (t < shrinkTime)
-    {
-        float eased = EaseInBack(t / shrinkTime);
-        transform.localScale = Vector3.LerpUnclamped(targetScale, originalScale, eased);
-        UpdateColliderSize(1f - eased);
-        t += Time.deltaTime;
-        yield return null;
-    }
-
-    transform.localScale = originalScale;
-    UpdateColliderSize(0f);
-    moveSpeed = originalSpeed;
-
-    growRoutine = null;
-    growDurationRemaining = 0f; // Reset
-}
-
 private void UpdateColliderSize(float growPercent)
 {
     if (boxCollider == null) return;
